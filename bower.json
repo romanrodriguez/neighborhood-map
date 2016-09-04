@@ -1,0 +1,23 @@
+{
+  "name": "Neighborhood Map",
+  "authors": [
+    "Roman <romanrodriguez@users.noreply.github.com>"
+  ],
+  "description": "Udacity Front-End Nanodegree Neigborhood Map Project",
+  "main": "index.html",
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    ".DS_Store",
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.1.0",
+    "knockout": "^3.4.0"
+  }
+}
