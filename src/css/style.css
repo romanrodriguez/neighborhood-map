@@ -52,6 +52,12 @@
           padding: 5px 0 0 15px;
           text-decoration: underline;
       }
+      h2 {
+          color: #001f3f;
+          font-weight: bold;
+          font-size: 100px;
+          text-align: left;   
+      }
       hr {
           background: #D0D7D9;
           height: 1px;
@@ -184,7 +190,7 @@
           input {
               font-size: 60%;
           }
-          .title h1 {
+          .title h1, h2 {
               font-size: 80%;
           }
           #pano {
@@ -204,7 +210,7 @@
           input {
               font-size: 65%;
           }
-          .title h1 {
+          .title h1, h2 {
               font-size: 85%;
           }
           #pano {
@@ -224,7 +230,7 @@
           input {
               font-size: 70%;
           }
-          .title h1 {
+          .title h1, h2 {
               font-size: 90%;
           }
           #pano {
@@ -244,7 +250,7 @@
           input {
               font-size: 80%;
           }
-          .title h1 {
+          .title h1, h2 {
               font-size: 95%;
           }
           #pano {
@@ -264,7 +270,7 @@
           input {
               font-size: 95%;
           }
-          .title h1 {
+          .title h1, h2 {
               font-size: 100%;
           }
           #pano {
@@ -284,7 +290,7 @@
           input {
               font-size: 100%;
           }
-          .title h1 {
+          .title h1, h2 {
               font-size: 105%;
           }
           #pano {
