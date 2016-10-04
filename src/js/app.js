@@ -61,7 +61,9 @@ VenueModel.prototype.info = function() {
     var largeInfowindow = new google.maps.InfoWindow();
     largeInfowindow.setContent(contentString);
     largeInfowindow.open(map, this.marker);
-    this.marker.largeInfowindow.close();
+    if (largeInfowindow.open){
+        this.largeInfowindow.close;
+    }
 }
 
 // Animation for marker when it is clicked.
