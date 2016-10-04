@@ -31,7 +31,7 @@
           overflow-x: hidden;
       }
       input {
-          font-size: 12px;
+          font-size: 10px;
       }
       #hide-listings,
       #show-listings {
@@ -262,7 +262,7 @@
               font-size: 100%;
           }
           input {
-              font-size: 100%;
+              font-size: 95%;
           }
           .title h1 {
               font-size: 100%;
@@ -282,7 +282,7 @@
               font-size: 105%;
           }
           input {
-              font-size: 105%;
+              font-size: 100%;
           }
           .title h1 {
               font-size: 105%;
