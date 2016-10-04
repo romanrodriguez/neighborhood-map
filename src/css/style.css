@@ -60,7 +60,7 @@
           width: 95%
       }
       .filter {
-          width: 60%;
+          width: 80%;
           border: solid 1px #E5E5E5;
           outline: 0;
           background: #FFFFFF url('bg_form.png') left top repeat-x;
@@ -97,7 +97,7 @@
       }
       #places-search,
       #search-within-time-text {
-          width: 60%;
+          width: 80%;
           border: solid 1px #E5E5E5;
           border-radius: 7%;
           outline: 0;
@@ -128,7 +128,7 @@
           border-radius: 7%;
       }
       #zoom-to-area-text {
-          width: 60%;
+          width: 80%;
           border: solid 1px #E5E5E5;
           border-radius: 7%;
           outline: 0;
