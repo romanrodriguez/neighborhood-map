@@ -101,64 +101,18 @@
           color: #666;
           cursor: pointer;
       }
-      #places-search,
-      #search-within-time-text {
-          width: 80%;
-          border: solid 1px #E5E5E5;
-          border-radius: 7%;
-          outline: 0;
-          background: #FFFFFF url('bg_form.png') left top repeat-x;
-          background: -webkit-gradient(linear, left top, left 25, from(#FFFFFF), color-stop(4%, #EEEEEE), to(#FFFFFF));
-          background: -moz-linear-gradient(top, #FFFFFF, #EEEEEE 1px, #FFFFFF 25px);
-          box-shadow: rgba(0, 0, 0, 0.1) 0 0 8px;
-          -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 0 8px;
-          -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0 0 8px;
-      }
       #pano {
           width: 200px;
           height: 200px;
       }
-      #places-search:focus,
-      #search-within-time-text:focus {
-          border-color: #C9C9C9;
-          -webkit-box-shadow: rgba(0, 0, 0, 0.15) 0 0 8px;
-      }
       .text {
           font-size: 12px;
       }
-      #toggle-drawing,
-      #zoom-to-area {
+      #toggle-drawing {
           width: 35%;
           position: relative;
           margin-left: 10px;
           border-radius: 7%;
-      }
-      #zoom-to-area-text {
-          width: 80%;
-          border: solid 1px #E5E5E5;
-          border-radius: 7%;
-          outline: 0;
-          background: #FFFFFF url('bg_form.png') left top repeat-x;
-          background: -webkit-gradient(linear, left top, left 25, from(#FFFFFF), color-stop(4%, #EEEEEE), to(#FFFFFF));
-          background: -moz-linear-gradient(top, #FFFFFF, #EEEEEE 1px, #FFFFFF 25px);
-          box-shadow: rgba(0, 0, 0, 0.1) 0 0 8px;
-          -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 0 8px;
-          -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0 0 8px;
-      }
-      #zoom-to-area-text:focus {
-          border-color: #C9C9C9;
-          -webkit-box-shadow: rgba(0, 0, 0, 0.15) 0 0 8px;
-      }
-      #go-places,
-      #search-within-time {
-          width: 35%;
-          position: relative;
-          margin-left: 10px;
-          border-radius: 7%;
-      }
-      #max-duration,
-      #mode {
-          color: orange;
       }
       button {
           background: #428BCA;
