@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var map;
 
@@ -8,12 +8,13 @@ var markers = [];
 // This global polygon variable is to ensure only ONE polygon is rendered.
 var polygon = null;
 
-// Create placemarkers array to use in multiple functions to have control
-// over the number of places that show.
-var placeMarkers = [];
+// // Create placemarkers array to use in multiple functions to have control
+// // over the number of places that show.
+// var placeMarkers = [];
 
+var largeInfowindow;
 // Foursquare API Userless Access
-var FOURSQUARE_URL = "https://api.foursquare.com/v2/venues/explore?client_id=ELY3E2TUMOBQYW2RNN3PAFUPSK0MXYYH35YHUCHNLKE1RSNX&client_secret=MZYLG135WRNP2ETN4PMEXVFNPEWWTQLIR4ODFO5CBJK0KLXD";
+var FOURSQUARE_URL = "https://api.foursquare.com/v2/venues/explore?&venuePhotos=1&client_id=ELY3E2TUMOBQYW2RNN3PAFUPSK0MXYYH35YHUCHNLKE1RSNX&client_secret=MZYLG135WRNP2ETN4PMEXVFNPEWWTQLIR4ODFO5CBJK0KLXD";
 
 // Foursquare API Settings
 var FOURSQUARE_SETTINGS = {
@@ -32,6 +33,7 @@ var VenueModel = function (data) {
 
     this.name = ko.observable(data.venue.name);
     this.address = data.venue.location.formattedAddress || '';
+    this.icon = ko.observable(data.venue.icon);
 
     this.marker = new google.maps.Marker({
         map: map,
@@ -57,13 +59,16 @@ VenueModel.prototype.bounce = function() {
 
 // Pop up Infowindow for marker
 VenueModel.prototype.info = function() {
-    var contentString = '<div>' + this.name() +  '</div>' + '<div>' + this.address; + '</div>'
+    var contentString = '<div><p>' +
+        this.name() + '</p><p>' + this.address +
+        '</p><img' + this.icon; + '>'
+    
     var largeInfowindow = new google.maps.InfoWindow();
     largeInfowindow.setContent(contentString);
     largeInfowindow.open(map, this.marker);
-    if (largeInfowindow.open){
-        this.largeInfowindow.close;
-    }
+    largeInfowindow.addListener('closeclick', function() {
+                largeInfowindow.marker = null;
+    });
 }
 
 // Animation for marker when it is clicked.
@@ -124,6 +129,8 @@ function initMap() {
         mapTypeControl: false
     });
 
+    largeInfowindow = new google.maps.InfoWindow();
+
 	// Resize canvas for responsiveness
 	google.maps.event.addDomListener(window, "resize", function() {
 	   var center = map.getCenter();
@@ -164,8 +171,6 @@ function initMap() {
             lng: -122.578071
         }
     }];
-
-    var largeInfowindow = new google.maps.InfoWindow();
 
     // Initialize the drawing manager.
     var drawingManager = new google.maps.drawing.DrawingManager({
