@@ -1,415 +1,242 @@
-'use strict';
+// These are hard-coded locations. Normally we'd have these in a database instead.
+var favoritePlaces = [{
+    name: 'Golden Gate Bridge',
+    location: {
+        lat: 37.819929,
+        lng: -122.478255
+    }
+}, {
+    name: 'Googleplex',
+    location: {
+        lat: 37.422,
+        lng: -122.084057
+    }
+}, {
+    name: 'Udacity',
+    location: {
+        lat: 37.399864,
+        lng: -122.1084
+    }
+}, {
+    name: 'Fisherman\'s Wharf',
+    location: {
+        lat: 37.794565,
+        lng: -122.40783
+    }
+}, {
+    name: 'Muir Woods',
+    location: {
+        lat: 37.895369,
+        lng: -122.578071
+    }
+}, {
+    name: 'Napa Valley',
+    location: {
+        lat: 38.427432,
+        lng: -122.39433
+    }
+}, {
+    name: 'La Taqueria',
+    location: {
+        lat: 37.750896,
+        lng: -122.418087
+    }
+}, {
+    name: 'Dolores Park',
+    location: {
+        lat: 37.759773,
+        lng: -122.427063
+    }
+}];
 
 var map;
-
-// Create a new blank array for all the listing markers.
-var markers = [];
-
-// This global polygon variable is to ensure only ONE polygon is rendered.
-var polygon = null;
-
-// // Create placemarkers array to use in multiple functions to have control
-// // over the number of places that show.
-// var placeMarkers = [];
-
-var largeInfowindow;
-// Foursquare API Userless Access
-var FOURSQUARE_URL = "https://api.foursquare.com/v2/venues/explore?&venuePhotos=1&client_id=ELY3E2TUMOBQYW2RNN3PAFUPSK0MXYYH35YHUCHNLKE1RSNX&client_secret=MZYLG135WRNP2ETN4PMEXVFNPEWWTQLIR4ODFO5CBJK0KLXD";
-
-// Foursquare API Settings
-var FOURSQUARE_SETTINGS = {
-      ll: '37.4419, -122.1430',
-      limit: 50,
-      section: 'topPicks',
-      v: '20160903',
-      m: 'foursquare'
-}
-
-// Instance of Venue Model 
-var VenueModel = function (data) {
-    var lat = data.venue.location.lat;
-    var lng = data.venue.location.lng;
-    this.position = new google.maps.LatLng(lat, lng);
-
-    this.name = ko.observable(data.venue.name);
-    this.address = data.venue.location.formattedAddress || '';
-    this.icon = ko.observable(data.venue.icon);
-
-    this.marker = new google.maps.Marker({
-        map: map,
-        position: this.position,
-        title: name,
-        animation: google.maps.Animation.DROP,
-    });
-}
-
-// Animation to bounce marker
-VenueModel.prototype.bounce = function() {
-    var obj;
-    if (this.hasOwnProperty('marker')) {
-        obj = this.marker;
-    } else {
-        obj = this;
-    }
-    obj.setAnimation(google.maps.Animation.BOUNCE);
-    setTimeout(function() {
-        obj.setAnimation(null);
-    }, 1000);
-}
-
-// Pop up Infowindow for marker
-VenueModel.prototype.info = function() {
-    var contentString = '<div><p>' +
-        this.name() + '</p><p>' + this.address +
-        '</p><img' + this.icon; + '>'
-    
-    var largeInfowindow = new google.maps.InfoWindow();
-    largeInfowindow.setContent(contentString);
-    largeInfowindow.open(map, this.marker);
-    largeInfowindow.addListener('closeclick', function() {
-                largeInfowindow.marker = null;
-    });
-}
-
-// Animation for marker when it is clicked.
-VenueModel.prototype.animate = function() {
-    this.bounce();
-    this.info();
-}
-
-// ViewModel
-var mapViewModel = function() {
-    var self = this;
-    self.venues = ko.observableArray([]);
-    self.keyword = ko.observable('');
-    self.foursquareVenues = ko.observableArray([]);
-    // JSON Foursquare API
-    $.getJSON(FOURSQUARE_URL, FOURSQUARE_SETTINGS).done(function(data) {
-        self.foursquareVenues(data.response.groups[0].items);
-        self.bounds = new google.maps.LatLngBounds();
-
-        for (var i = 0; i < self.foursquareVenues().length; i++) {
-            var venue = new VenueModel(self.foursquareVenues()[i]);
-            self.venues.push(venue);
-            self.bounds.extend(venue.position);
-            map.fitBounds(self.bounds);
-            map.setCenter(self.bounds.getCenter());
-        }
-    }).fail(function(jqXHR, status, error) {
-        alert("We couldn't reach the Forsquare API. Please, try again later.");
-    });
-
-    self.showVenues = ko.computed(function() {
-        return self.venues().filter(function(venue) {
-            if (venue.name().toLowerCase().indexOf(self.keyword().toLowerCase()) > -1) {
-                venue.marker.setMap(map);
-
-                venue.marker.addListener('click', function(){
-                    map.panTo(venue.position);
-                    venue.animate();
-                });
-                return true;
-            } else {
-                venue.marker.setMap(null);
-                return false;
-            }
-        });
-    });
-}
+var infowindow;
+var mapViewModel = new ViewModel();
+var clickedLocation;
+var searchLocation;
 
 function initMap() {
-    // Constructor creates a new map - only center and zoom are required.
-    map = new google.maps.Map(document.getElementById('map'), {
+    // Creates a new map - only center and zoom are required.
+    map = new google.maps.Map(document.getElementById("map"), {
         center: {
             lat: 37.5087133,
             lng: -122.2945044
         },
-        zoom: 10,
+        zoom: 9,
         styles: styles,
         mapTypeControl: false
     });
 
-    largeInfowindow = new google.maps.InfoWindow();
+    // Call generate markers
+    generateMarkers();
 
-	// Resize canvas for responsiveness
-	google.maps.event.addDomListener(window, "resize", function() {
-	   var center = map.getCenter();
-	   google.maps.event.trigger(map, "resize");
-	   map.setCenter(center); 
-	});
-
-    // These are my hard-coded favorite locations.
-    // Normally we'd have these in a database instead.
-    var locations = [{
-        title: 'Golden Gate Bridge',
-        location: {
-            lat: 37.819929,
-            lng: -122.478255
-        }
-    }, {
-        title: 'Googleplex',
-        location: {
-            lat: 37.422,
-            lng: -122.084057
-        }
-    }, {
-        title: 'Udacity',
-        location: {
-            lat: 37.399864,
-            lng: -122.1084
-        }
-    }, {
-        title: 'Chinatown',
-        location: {
-            lat: 37.794138,
-            lng: -122.407791
-        }
-    }, {
-        title: 'Muir Woods',
-        location: {
-            lat: 37.895369,
-            lng: -122.578071
-        }
-    }];
-
-    // Initialize the drawing manager.
-    var drawingManager = new google.maps.drawing.DrawingManager({
-        drawingMode: google.maps.drawing.OverlayType.POLYGON,
-        drawingControl: true,
-        drawingControlOptions: {
-            position: google.maps.ControlPosition.TOP_LEFT,
-            drawingModes: [
-                google.maps.drawing.OverlayType.POLYGON
-            ]
-        }
+    // Create empty infowindow
+    infowindow = new google.maps.InfoWindow({
+        maxWidth: 200
     });
 
-    // Style the markers a bit. This will be our listing marker icon.
-    var defaultIcon = makeMarkerIcon('0091ff');
-
-    // Create a "highlighted location" marker color for when the user
-    // mouses over the marker.
-    var highlightedIcon = makeMarkerIcon('FFFF24');
-
-    // The following group uses the location array to create an array of markers on initialize.
-    for (var i = 0; i < locations.length; i++) {
-        // Get the position from the location array.
-        var position = locations[i].location;
-        var title = locations[i].title;
-        // Create a marker per location, and put into markers array.
-        var marker = new google.maps.Marker({
-            position: position,
-            title: title,
-            animation: google.maps.Animation.DROP,
-            icon: defaultIcon,
-            id: i
-        });
-        // Push the marker to our array of markers.
-        markers.push(marker);
-        // Create an onclick event to open the large infowindow at each marker.
-        marker.addListener('click', function() {
-            populateInfoWindow(this, largeInfowindow);
-        });
-        // Two event listeners - one for mouseover, one for mouseout,
-        // to change the colors back and forth.
-        marker.addListener('mouseover', function() {
-            this.setIcon(highlightedIcon);
-        });
-        marker.addListener('mouseout', function() {
-            this.setIcon(defaultIcon);
-        });
-    }
-    document.getElementById('show-listings').addEventListener('click', showListings);
-
-    document.getElementById('hide-listings').addEventListener('click', function() {
-        hideMarkers(markers);
-    });
-
-    document.getElementById('toggle-drawing').addEventListener('click', function() {
-        toggleDrawing(drawingManager);
-    });
-
-    // Add an event listener so that the polygon is captured,  call the
-    // searchWithinPolygon function. This will show the markers in the polygon,
-    // and hide any outside of it.
-    drawingManager.addListener('overlaycomplete', function(event) {
-        // First, check if there is an existing polygon.
-        // If there is, get rid of it and remove the markers
-        if (polygon) {
-            polygon.setMap(null);
-            hideMarkers(markers);
-        }
-        // Switching the drawing mode to the HAND (i.e., no longer drawing).
-        drawingManager.setDrawingMode(null);
-        // Creating a new editable polygon from the overlay.
-        polygon = event.overlay;
-        polygon.setEditable(true);
-        // Searching within the polygon.
-        searchWithinPolygon(polygon);
-        // Make sure the search is re-done if the poly is changed.
-        polygon.getPath().addListener('set_at', searchWithinPolygon);
-        polygon.getPath().addListener('insert_at', searchWithinPolygon);
+    // Resize canvas for responsiveness
+    google.maps.event.addDomListener(window, "resize", function() {
+        var center = map.getCenter();
+        google.maps.event.trigger(map, "resize");
+        map.setCenter(center);
     });
 }
 
-// This function populates the infowindow when the marker is clicked. We'll only allow
-// one infowindow which will open at the marker that is clicked, and populate based
-// on that markers position.
-function populateInfoWindow(marker, infowindow) {
-    // Check to make sure the infowindow is not already opened on this marker.
-    if (infowindow.marker != marker) {
-        // Clear the infowindow content to give the streetview time to load.
-        infowindow.setContent('');
-        infowindow.marker = marker;
-        // Make sure the marker property is cleared if the infowindow is closed.
-        infowindow.addListener('closeclick', function() {
-            infowindow.marker = null;
-        });
-        var streetViewService = new google.maps.StreetViewService();
-        var radius = 50;
-        // In case the status is OK, which means the pano was found, compute the
-        // position of the streetview image, then calculate the heading, then get a
-        // panorama from that and set the options
-        function getStreetView(data, status) {
-            if (status == google.maps.StreetViewStatus.OK) {
-                var nearStreetViewLocation = data.location.latLng;
-                var heading = google.maps.geometry.spherical.computeHeading(
-                    nearStreetViewLocation, marker.position);
-                infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
-                var panoramaOptions = {
-                    position: nearStreetViewLocation,
-                    pov: {
-                        heading: heading,
-                        pitch: 30
-                    }
-                };
-                var panorama = new google.maps.StreetViewPanorama(
-                    document.getElementById('pano'), panoramaOptions);
-            } else {
-                infowindow.setContent('<div>' + marker.title + '</div>' +
-                    '<div>No Street View Found</div>');
-            }
-        }
-        // Use streetview service to get the closest streetview image within
-        // 50 meters of the markers position
-        streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
-        // Open the infowindow on the correct marker.
-        infowindow.open(map, marker);
-    }
+function PlaceContainer(location) {
+    this.name = location.name;
+    this.location = location.location;
+    this.selectedLocation = ko.observable(false);
 }
 
-// This function will loop through the markers array and display them all.
-function showListings() {
+function generateMarkers() {
+    // Generate a marker for each place. Store the location for accessibility and create a marker object.
+    var place;
     var bounds = new google.maps.LatLngBounds();
-    // Extend the boundaries of the map for each marker and display the marker
-    for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(map);
-        bounds.extend(markers[i].position);
+
+    for (var i = 0; i < mapViewModel.locObservableArray().length; i++) {
+        place = mapViewModel.locObservableArray()[i];
+        var newMarker = new google.maps.Marker({
+            map: map,
+            position: place.location,
+            title: place.name,
+            animation: google.maps.Animation.DROP
+        });
+
+        place.marker = newMarker;
+
+        newMarker.addListener('click', (function(place) {
+            return function() {
+                populateInfoWindow(place);
+                toggleBounce(place);
+                // To control color change of locations 
+                if (clickedLocation) {
+                    clickedLocation.selectedLocation(false);
+                }
+                clickedLocation = place;
+                place.selectedLocation(true);
+            };
+        })(place));
     }
-    map.fitBounds(bounds);
 }
 
-// This function will loop through the listings and hide them all.
-function hideMarkers(markers) {
-    for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(null);
-    }
-}
-
-// This function takes in a COLOR, and then creates a new marker
-// icon of that color. The icon will be 21 px wide by 34 high, have an origin
-// of 0, 0 and be anchored at 10, 34).
-function makeMarkerIcon(markerColor) {
-    var markerImage = new google.maps.MarkerImage(
-        'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|' + markerColor +
-        '|40|_|%E2%80%A2',
-        new google.maps.Size(21, 34),
-        new google.maps.Point(0, 0),
-        new google.maps.Point(10, 34),
-        new google.maps.Size(21, 34));
-    return markerImage;
-}
-
-// This shows and hides (respectively) the drawing options.
-function toggleDrawing(drawingManager) {
-    if (drawingManager.map) {
-        drawingManager.setMap(null);
-        // In case the user drew anything, get rid of the polygon
-        if (polygon !== null) {
-            polygon.setMap(null);
-        }
+function toggleBounce(place) {
+    if (place.marker.getAnimation() !== null) {
+        place.marker.setAnimation(null);
     } else {
-        drawingManager.setMap(map);
+        place.marker.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function() {
+            place.marker.setAnimation(null);
+        }, 2000);
     }
 }
 
-// This function hides all markers outside the polygon,
-// and shows only the ones within it. This is so that the
-// user can specify an exact area of search.
-function searchWithinPolygon() {
-    for (var i = 0; i < markers.length; i++) {
-        if (google.maps.geometry.poly.containsLocation(markers[i].position, polygon)) {
-            markers[i].setMap(map);
+// Populate and open infowindow. Uses AJAX retrieved info and Knockout to update the UI.
+function populateInfoWindow(location) {
+    // Foursquare Credentials
+    var FOURSQUARE_URL = 'https://api.foursquare.com/v2/venues/search';
+    var CLIENT_ID = 'ELY3E2TUMOBQYW2RNN3PAFUPSK0MXYYH35YHUCHNLKE1RSNX';
+    var CLIENT_SECRET = 'MZYLG135WRNP2ETN4PMEXVFNPEWWTQLIR4ODFO5CBJK0KLXD';
+
+    // AJAX request.   
+    function searchFoursquareVenues() {
+        $.ajax({
+            url: FOURSQUARE_URL,
+            dataType: 'json',
+            data: {
+                limit: 10,
+                ll: '37.5087133,-122.2945044',
+                query: location.name,
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_SECRET,
+                v: 20160903,
+                m: 'foursquare',
+            },
+            async: true,
+
+            success: function(result) {
+                var nameSearched = result.response.venues[0];
+                var addressSearched = nameSearched.location.address;
+                var infoWindowInfo;
+
+                if (nameSearched === null) {
+                    infoWindowInfo = '<div class="infowindowHeader">' + location.name + "<br>" + 'NO ADDRESS DATA AVAILABLE.' + '</div>';
+                } else {
+                    infoWindowInfo = '<div class="infowindowHeader">' + location.name + "<br>" + addressSearched + '</div>';
+                }
+
+                infowindow.setContent(infoWindowInfo);
+                infowindow.open(map, location.marker);
+            },
+
+            error: function() {
+                alert('Foursquare data unavailable. Please try again later.');
+            }
+        });
+    }
+    searchFoursquareVenues();
+}
+
+function ViewModel() {
+    var self = this;
+    self.locObservableArray = ko.observableArray();
+
+    var location;
+
+    for (var i = 0; i < favoritePlaces.length; i++) {
+        location = new PlaceContainer(favoritePlaces[i]);
+        self.locObservableArray.push(location);
+    }
+
+    self.favoriteLocationClick = function(marker) {
+        google.maps.event.trigger(this.marker, 'click');
+    };
+
+    self.sidebarControl = ko.observable();
+    self.searchLocation = ko.observable();
+    self.filterLocations = ko.computed(function() {
+        if (!self.searchLocation() || self.searchLocation === undefined) {
+            for (var i = 0; i < self.locObservableArray().length; i++) {
+                if (self.locObservableArray()[i].marker !== undefined) {
+                    self.locObservableArray()[i].marker.setVisible(true);
+                }
+            }
+            return self.locObservableArray();
+
         } else {
-            markers[i].setMap(null);
-        }
-    }
-}
-
-// This is the PLACE DETAILS search - it's the most detailed so it's only
-// executed when a marker is selected, indicating the user wants more
-// details about that place.
-function getPlacesDetails(marker, infowindow) {
-    var service = new google.maps.places.PlacesService(map);
-    service.getDetails({
-        placeId: marker.id
-    }, function(place, status) {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-            // Set the marker property on this infowindow so it isn't created again.
-            infowindow.marker = marker;
-            var innerHTML = '<div>';
-            if (place.name) {
-                innerHTML += '<strong>' + place.name + '</strong>';
-            }
-            if (place.formatted_address) {
-                innerHTML += '<br>' + place.formatted_address;
-            }
-            if (place.formatted_phone_number) {
-                innerHTML += '<br>' + place.formatted_phone_number;
-            }
-            if (place.opening_hours) {
-                innerHTML += '<br><br><strong>Hours:</strong><br>' +
-                    place.opening_hours.weekday_text[0] + '<br>' +
-                    place.opening_hours.weekday_text[1] + '<br>' +
-                    place.opening_hours.weekday_text[2] + '<br>' +
-                    place.opening_hours.weekday_text[3] + '<br>' +
-                    place.opening_hours.weekday_text[4] + '<br>' +
-                    place.opening_hours.weekday_text[5] + '<br>' +
-                    place.opening_hours.weekday_text[6];
-            }
-            if (place.photos) {
-                innerHTML += '<br><br><img src="' + place.photos[0].getUrl({
-                    maxHeight: 100,
-                    maxWidth: 200
-                }) + '">';
-            }
-            innerHTML += '</div>';
-            infowindow.setContent(innerHTML);
-            infowindow.open(map, marker);
-            // Make sure the marker property is cleared if the infowindow is closed.
-            infowindow.addListener('closeclick', function() {
-                infowindow.marker = null;
-            });
+            filter = self.searchLocation().toLowerCase();
+            return ko.utils.arrayFilter(self.locObservableArray(),
+                function(location) {
+                    var matching = location.name.toLowerCase().indexOf(filter) > -1;
+                    location.marker.setVisible(matching);
+                    return matching;
+                });
         }
     });
 }
 
 function startMap() {
-	initMap();
-	ko.applyBindings(new mapViewModel());
+    initMap();
+    ko.applyBindings(mapViewModel);
 }
 
-// This makes sure to warn the user if Google Maps is unavailable.
+// Warns the user if Google Maps is unavailable.
 function googleError() {
     document.getElementById('map').innerHTML = '<div class="map-error">Google Maps is unavailable. Please try again later.</div>';
 }
+
+// Control responsive behavior for other screens
+var sidebarControl = document.getElementById('sidebar');
+var triggerSidebar = document.getElementById('triggerSidebar');
+var mapControl = document.getElementById('map');
+
+// Display sidebar
+triggerSidebar.addEventListener('click', function(e) {
+    sidebarControl.classList.toggle('open');
+    e.stopPropagation();
+});
+
+// Hide sidebar
+mapControl.addEventListener('click', function() {
+    sidebarControl.classList.remove('open');
+});

@@ -1,0 +1,101 @@
+html,
+body {
+    font-family: 'Droid Sans', sans-serif;
+	color: #f1fffa;
+	padding: 0;
+	margin: 0;
+}
+
+#container {
+	height: 960px;
+	width: 100%;
+	min-width: 796px;
+	max-width: 1680px;
+	margin: 0 auto;
+	overflow: auto;
+    background-color: #464E47;
+}
+
+#sidebar {
+	height: 100%;
+	width: 20%;
+	float: left;
+	text-align: center;
+	background-color: #464E47;	
+}
+
+#topBar{
+	height: 7%;
+	width: 80%;
+	float: right;
+	text-align: center;
+	background-color: #568259;
+}
+
+#map {
+	height: 100%;
+	width: 80%;
+	float: right;
+}
+
+#input {
+	width: 90%;
+	min-width: 45px;
+	min-height: 45px;
+	max-width: 300px;
+	padding: 0 10px 0 12px;	
+	margin: 0 auto;
+	font-size: 14px;
+	font-family: Arial, sans-serif;
+	background-color: #f1fffa;
+}
+
+.searchBar {
+	height: 30px;
+	margin-top: 5px;
+	margin-left: 10px;
+	border: 1px solid #888;
+	border-radius: 4px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+}
+
+.infowindowHeader {
+	font-size: 18px;
+	color: #7c3626;
+	text-align: center;
+}
+
+.colorSwap {
+	color: #f5853f;
+}
+
+.map-error {
+          color: red;
+          font-size: 28px;
+}
+
+.hiding {
+	display: none;
+}
+
+ul {
+	margin-left: 12%;
+	padding-left: 2%;
+	list-style-type: none;
+}
+
+li {
+	margin: 4px 4% 4px 0;
+	padding: 10px 10% 5px 0;
+	text-align: left;
+}
+
+a {
+	color: #f1fffa;
+	font-size: 16px;
+	margin-left: 5%;
+	padding-left: 0;
+	text-decoration: none;
+}

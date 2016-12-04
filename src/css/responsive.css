@@ -1,0 +1,141 @@
+html,
+body,
+#container {
+    font-family: 'Droid Sans', sans-serif;
+    color: #f1fffa;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+#container {
+    height: 100%;
+    min-width: 0;
+    max-width: 1680px;
+    margin: 0 auto;
+    overflow: auto;
+    background-color: #568259;
+}
+
+#sidebar {
+    height: 100%;
+    width: 160px;
+    position: absolute;
+    text-align: center;
+    background-color: #464E47;
+    -webkit-transform: translate(-300px, 0);
+    transform: translate(-300px, 0);
+    transition: transform 0.4s ease;
+}
+
+#sidebar.open {
+    -webkit-transform: translate(0, 0);
+    transform: translate(0, 0);
+}
+
+@media screen and (min-width: 700px) {
+    #sidebar {
+        position: relative;
+        transform: translate(0, 0);
+    }
+    body {
+        display: flex;
+    }
+    #map {
+        width: auto;
+        flex-grow: 1;
+    }
+}
+
+#topBar {
+    height: 10%;
+    width: 100%;
+    float: right;
+    text-align: center;
+    background-color: #568259;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+    float: right;
+}
+
+#input {
+    width: 90%;
+    min-width: 45px;
+    min-height: 45px;
+    max-width: 300px;
+    padding: 0 10px 0 12px; 
+    margin: 0 auto;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    background-color: #f1fffa;
+}
+
+.searchBar {
+    height: 30px;
+    margin-top: 5px;
+    margin-left: 10px;
+    border: 1px solid #888;
+    border-radius: 4px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+}
+
+.infowindowHeader {
+    font-size: 18px;
+    color: #7c3626;
+    text-align: center;
+}
+
+.colorSwap {
+    color: #f5853f;
+}
+
+.map-error {
+    color: red;
+    font-size: 28px;
+}
+
+.hiding {
+    display: inline-block;
+    margin-left: 10%;
+}
+
+h1 {
+    font-size: 150%;
+    padding-left: 20px;
+    display: inline-block;
+}
+
+img {
+    width: 32px;
+    height: 24px;
+    border: 0;
+    margin: 20px 20px 0 5px;
+    padding-left: 100px;
+    display: inline-block;
+}
+
+ul {
+    margin-left: 12%;
+    padding-left: 2%;
+    list-style-type: none;
+}
+
+li {
+    margin: 4px 4% 4px 0;
+    padding: 10px 10% 5px 0;
+    text-align: left;
+}
+
+a {
+    color: #f1fffa;
+    font-size: 16px;
+    margin-left: 5%;
+    padding-left: 0;
+    text-decoration: none;
+}

@@ -5,47 +5,34 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
     <title>Neighborhood Map</title>
-    <link href="https://fonts.googleapis.com/css?family=Droid+Sans" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Sans">
+    <link rel="stylesheet" href="css/main.css" media="screen">
+    <link rel="stylesheet" href="css/responsive.css" media="only screen and (max-width:700px)">
 </head>
 
 <body>
-    <div class="container">
-        <div class="options-box">
-            <div class="title">
-                <h1>BAY AREA'S BEST</h1></div>
-            <div class="listings">
-                <ul>
-                <li><input id="show-listings" type="button" value="Show Top 5"></li>
-                <li><input id="hide-listings" type="button" value="Hide Top 5"></li>
-                </ul>
-            </div>
-                <hr>
-            <div>
-                <h2>Top 50 Foursquare Locations in the Area</h2>
-                <input placeholder="Filter by typing a keyword" class="filter" data-bind="value: keyword, valueUpdate: 'keyup'" autocomplete="off">
-                <div class="list">
-                    <ul data-bind="foreach: showVenues">
-                        <li data-bind="text: name, event: {click: animate, mouseover: bounce}"></li>
-                    </ul>
-                </div>
-             </div>   
-             <hr>
-             <div>  
-                <span class="text"> Draw shape to search</span>
-                <br>
-                <input id="toggle-drawing" type="button" value="Draw">
-            </div>
-            <hr>
+    <div id="container">
+        <div id="topBar">
+            <h1>Bay Area</h1>
+            <img id="triggerSidebar" class="hiding" src="img/hamburger_menu.png">
         </div>
-        <div id="map"></div>
+        <div id="map">
+        </div>
+        <div id="sidebar">
+            <h2>My Favorites</h2>
+            <form action="#" method="GET" id="searchForm">
+                <input data-bind="textInput: searchLocation" id="input" class="searchBar" type="text" placeholder="Start typing here">
+            </form>
+            <ul id="locationContainer" data-bind="foreach: filterLocations">
+                <li>
+                    <a id="locationList" href="" data-bind="text: name, css: {colorSwap: selectedLocation}, click: $parent.favoriteLocationClick"></a>
+                </li>
+            </ul>
+        </div>
     </div>
-
     <!-- Google Maps API -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyCb7-XovAOZyfnETL4Cv8qjAHCnyoUO1qM&callback=startMap" onerror="googleError()">
-    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCb7-XovAOZyfnETL4Cv8qjAHCnyoUO1qM&v=3&libraries=places&callback=startMap" onerror="googleError()"></script>
     <!-- External Libraries -->
     <script src="../bower_components/jquery/dist/jquery.min.js"></script>
     <script src="../bower_components/knockout/dist/knockout.js"></script>
@@ -53,7 +40,6 @@
     <script src="js/mapstyle.js"></script>
     <script src="js/app.js"></script>
     <!-- End JS Build -->
-
 </body>
 
 </html>
